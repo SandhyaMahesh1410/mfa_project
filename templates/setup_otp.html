@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Setup MFA</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width:700px; margin:30px auto; padding:10px; }
+    .card { border:1px solid #e0e0e0; padding:18px; border-radius:8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+    .qr { margin: 14px 0; }
+    .secret { background:#f7f7f7; padding:8px; display:inline-block; font-family:monospace; }
+    .btn { padding:10px 16px; border:none; background:#1976d2; color:white; border-radius:6px; cursor:pointer; text-decoration:none; }
+    .link { margin-left:12px; color:#1976d2; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Step: Set up Google Authenticator</h2>
+    <p>Choose one of the two methods below to register your authenticator app for this account.</p>
+
+    <h3>1) Scan QR Code</h3>
+    <p class="qr">
+      <!-- qr_path supplied by backend as path to static image (e.g. static/user@example.com.png)
+           or qr_code base64 (if you used data URI you can adjust accordingly). -->
+      {% if qr_path %}
+        <img src="{{ qr_path }}" alt="QR Code" width="180" height="180">
+      {% elif qr_code %}
+        <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" width="180" height="180">
+      {% else %}
+        <em>QR will appear here after registration.</em>
+      {% endif %}
+    </p>
+    <p><a class="btn" href="/show_qr">Show QR (if not shown)</a></p>
+
+    <hr>
+
+    <h3>2) Enter Secret Key Manually</h3>
+    <p>If scanning fails, manually add this key in the authenticator app (Add account → Enter a setup key):</p>
+    <p class="secret">{{ secret }}</p>
+
+    <hr>
+
+    <h4>Verify that the authenticator is working</h4>
+    <p>After adding either the QR or the secret into your app, open the authenticator and enter the 6-digit code below:</p>
+
+    <form method="POST" action="/verify_otp">
+      <label>OTP:</label><br>
+      <input type="text" name="otp" required pattern="\d{6}" placeholder="123456" style="padding:8px; width:160px; margin-top:6px;"><br><br>
+      <button type="submit" class="btn">Verify OTP</button>
+      <a href="/login" class="link">Skip / Go to Login</a>
+    </form>
+  </div>
+</body>
+</html>
